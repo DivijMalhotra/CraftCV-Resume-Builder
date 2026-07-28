@@ -1,26 +1,28 @@
 import { LayoutTemplate } from 'lucide-react'
-import React from 'react'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import ProfileInfoCard from './Cards'
+import { UserContext } from '../context/userContext'
 
 const Navbar = () => {
-  return (
-    <div className='h-24 bg-white/70 backdrop-blur-xl border-b border-violet-100/50 py-2.5 px-4 md:px-0 sticky top-0 z-50'>
-        <div className='max-w-6xl mx-auto flex items-center justify-between gap-5'>
-            <Link to='/' className='flex items-center gap-3'>
-            <div className='flex items-center gap-2'>
-                <div className='w-10 h-10 bg-gradient-to-r from-violet-600 to-fuchsia-600 rounded-2xl flex items-center 
-                justify-center shadow-lg shadow-violet-200'>
-                    <LayoutTemplate className='h-5 w-5 text-white'/>
-                </div>
+  const { user } = useContext(UserContext)
 
-                <span className='text-xl sm:text-2xl font-black bg-gradient-to-r from-violet-600 to-fuchsia-600 bg-clip-text text-transparent mt-[2px]'>
-                  CraftCV
-                </span>
-            </div>
-            </Link>
-            <ProfileInfoCard/>
-        </div>
+  return (
+    <div className='h-[64px] bg-white border-b border-slate-200 sticky top-0 z-50'>
+      <div className='max-w-7xl mx-auto px-6 lg:px-8 flex items-center justify-between h-full'>
+
+        {/* Logo */}
+        <Link to='/' className='flex items-center gap-2.5 flex-shrink-0'>
+          <div className='w-8 h-8 bg-gradient-to-br from-[#3B5BDB] to-[#5C7CFA] rounded-lg flex items-center justify-center'>
+            <LayoutTemplate className='text-white' size={16} />
+          </div>
+          <span className='text-lg font-black text-[#0D1B4B] tracking-tight'>CraftCV</span>
+        </Link>
+
+        {/* Right — Profile (no card box, just avatar + name + logout inline) */}
+        <ProfileInfoCard />
+
+      </div>
     </div>
   )
 }

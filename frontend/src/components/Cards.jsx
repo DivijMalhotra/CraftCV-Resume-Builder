@@ -2,13 +2,12 @@ import { useContext, useState } from "react"
 import { useNavigate } from "react-router-dom"
 import { UserContext } from "../context/userContext"
 import { cardStyles } from "../assets/dummyStyle"
-import { Award, Check, Clock, Edit, Trash2, TrendingUp, Zap } from "lucide-react"
+import { Award, Check, Clock, Edit2, MoreVertical, Trash2, TrendingUp, Zap } from "lucide-react"
 
-//PROFILE INFO CARDS
+// ── PROFILE INFO CARD ─────────────────────────────────────────
 const ProfileInfoCard = () => {
-
     const navigate = useNavigate()
-    const {user, clearUser} = useContext(UserContext)
+    const { user, clearUser } = useContext(UserContext)
 
     const handleLogout = () => {
         localStorage.removeItem('token')
@@ -18,244 +17,236 @@ const ProfileInfoCard = () => {
 
     return (
         user && (
-              <div className={cardStyles.profileCard}>
-                <div className={cardStyles.profileInitialsContainer}>
-                  <span className={cardStyles.profileInitialsText}>
-                    {user.name? user.name.charAt(0).toUpperCase() : ""}
-                  </span>
+            <div className="flex items-center gap-3">
+                {/* Avatar */}
+                <div className="w-9 h-9 bg-gradient-to-br from-[#3B5BDB] to-[#5C7CFA] rounded-xl flex items-center justify-center shadow-sm flex-shrink-0">
+                    <span className="text-sm font-black text-white">
+                        {user.name ? user.name.charAt(0).toUpperCase() : ""}
+                    </span>
                 </div>
 
-              <div>
-                <div className={cardStyles.profileName}>
-                  {user.name || ""}
+                {/* Name + logout */}
+                <div className="flex flex-col">
+                    <span className="text-sm font-bold text-[#0D1B4B] leading-tight">
+                        {user.name || ""}
+                    </span>
+                    <button
+                        onClick={handleLogout}
+                        className="text-[11px] font-semibold text-slate-400 hover:text-red-500 transition-colors text-left leading-tight mt-0.5"
+                    >
+                        Logout
+                    </button>
                 </div>
-                
-                <button className={cardStyles.logoutButton} onClick={handleLogout}>
-                  Logout
-                </button>
-              </div>
             </div>
         )
     )
 }
 
-//RESUME SUMMARY CARD COMPONENT
+// ── RESUME SUMMARY CARD ───────────────────────────────────────
 export const ResumeSummaryCard = ({
-  title = "Untitled Resume",
-  createdAt = null,
-  updatedAt = null,
-  onSelect,
-  onDelete,
-  completion = 85,
+    title = "Untitled Resume",
+    createdAt = null,
+    updatedAt = null,
+    onSelect,
+    onDelete,
+    completion = 85,
+    isNew = false,
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
+    const [menuOpen, setMenuOpen] = useState(false)
 
-  //CREATED AT
-  const formattedCreatedDate = createdAt
-    ? new Date(createdAt).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    })
-    : "—";
+    // Format dates
+    const formattedCreatedDate = createdAt
+        ? new Date(createdAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })
+        : "—"
 
-    //UPDATED AT
-  const formattedUpdatedDate = updatedAt
-    ? new Date(updatedAt).toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    })
-    : "—";
+    // Completion color
+    const getBarColor = () => {
+        if (completion >= 90) return "from-emerald-500 to-teal-500"
+        if (completion >= 70) return "from-amber-400 to-orange-500"
+        if (completion >= 40) return "from-[#3B5BDB] to-[#5C7CFA]"
+        return "from-red-400 to-rose-500"
+    }
 
-    //COLOR ACCORDING TO COMPLETION STATUS
-  const getCompletionColor = () => {
-    if (completion >= 90) return cardStyles.completionHigh;
-    if (completion >= 70) return cardStyles.completionMedium;
-    return cardStyles.completionLow;
-  };
+    const getCompletionLabel = () => {
+        if (completion >= 90) return { text: "Ready!", color: "text-emerald-600 bg-emerald-50 border-emerald-100" }
+        if (completion >= 70) return { text: "Almost there", color: "text-amber-600 bg-amber-50 border-amber-100" }
+        if (completion >= 40) return { text: "In progress", color: "text-[#3B5BDB] bg-blue-50 border-blue-100" }
+        return { text: "Getting started", color: "text-slate-500 bg-slate-50 border-slate-100" }
+    }
 
-  //ICON FOR COMPLETION STATUS
-  const getCompletionIcon = () => {
-    if (completion >= 90) return <Award size={12} />;
-    if (completion >= 70) return <TrendingUp size={12} />;
-    return <Zap size={12} />;
-  };
+    // Preview card accent color
+    const accents = [
+        { top: "from-[#3B5BDB] to-[#5C7CFA]", bg: "from-blue-50/80 to-indigo-50/80" },
+        { top: "from-sky-500 to-blue-500",      bg: "from-sky-50/80 to-blue-50/80" },
+        { top: "from-violet-500 to-indigo-500", bg: "from-violet-50/80 to-indigo-50/80" },
+        { top: "from-cyan-500 to-sky-500",      bg: "from-cyan-50/80 to-sky-50/80" },
+        { top: "from-indigo-500 to-blue-500",   bg: "from-indigo-50/80 to-blue-50/80" },
+    ]
+    const accent = accents[title.length % accents.length]
+    const label = getCompletionLabel()
 
-  //DELETION METHOD 
-  const handleDeleteClick = (e) => {
-    e.stopPropagation();
-    if (onDelete) onDelete();
-  };
+    const handleDeleteClick = (e) => {
+        e.stopPropagation()
+        setMenuOpen(false)
+        if (onDelete) onDelete()
+    }
 
-  //COLORS
-  const generateDesign = () => {
-    const colors = [
-      "from-blue-50 to-blue-100",
-      "from-purple-50 to-purple-100",
-      "from-emerald-50 to-emerald-100",
-      "from-amber-50 to-amber-100",
-      "from-rose-50 to-rose-100"
-    ];
-    return colors[title.length % colors.length];
-  };
+    return (
+        <div
+            className="group relative flex flex-col bg-white border border-slate-100 rounded-2xl overflow-hidden
+                cursor-pointer transition-all duration-300 hover:shadow-xl hover:shadow-blue-100/50
+                hover:border-blue-200 hover:-translate-y-0.5"
+            onClick={onSelect}
+        >
+            {/* ── NEW badge ── */}
+            {isNew && (
+                <div className="absolute top-3 left-3 z-20 px-2 py-0.5 bg-[#3B5BDB] text-white text-[9px] font-black rounded-full tracking-wide">
+                    NEW
+                </div>
+            )}
 
-  const designColor = generateDesign();
-
-  return (
-    <div
-      className={cardStyles.resumeCard}
-      onClick={onSelect}
-      onMouseEnter={() => setIsHovered(true)} //MOUSE OR SWIPE FOR MOBILE
-      onMouseLeave={() => setIsHovered(false)}
-    >
-      {/* Completion indicator */}
-      <div className={cardStyles.completionIndicator}>
-        <div className={`${cardStyles.completionDot} bg-gradient-to-r ${getCompletionColor()}`}>
-          <div className={cardStyles.completionDotInner} />
-        </div>
-        <span className={cardStyles.completionPercentageText}>{completion}%</span>
-        {getCompletionIcon()}
-      </div>
-
-      {/* Preview area */}
-      <div className={`${cardStyles.previewArea} bg-gradient-to-br ${designColor}`}>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <div className={cardStyles.emptyPreviewIcon}>
-            <Edit size={28} className="text-indigo-600" />
-          </div>
-          <span className={cardStyles.emptyPreviewText}>{title}</span>
-          <span className={cardStyles.emptyPreviewSubtext}>
-            {completion === 0 ? "Start building" : `${completion}% completed`}
-          </span>
-
-          {/* Mini resume sections indicator */}
-          <div className="mt-4 flex gap-2">
-            {['Profile', 'Work', 'Skills', 'Edu'].map((section, i) => (
-              <div
-                key={i}
-                className={`px-2 py-1 text-xs rounded-md ${i < Math.floor(completion / 25)
-                  ? 'bg-white/90 text-indigo-600 font-medium'
-                  : 'bg-white/50 text-gray-500'
-                  }`}
-              >
-                {section}
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Hover overlay with action buttons */}
-        {isHovered && (
-          <div className={cardStyles.actionOverlay}>
-            <div className={cardStyles.actionButtonsContainer}>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (onSelect) onSelect();
-                }}
-                className={cardStyles.editButton}
-                title="Edit"
-              >
-                <Edit size={18} className={cardStyles.buttonIcon} />
-              </button>
-              <button
-                onClick={handleDeleteClick}
-                className={cardStyles.deleteButton}
-                title="Delete"
-              >
-                <Trash2 size={18} className={cardStyles.buttonIcon} />
-              </button>
+            {/* ── 3-dot menu ── */}
+            <div className="absolute top-3 right-3 z-20" onClick={e => e.stopPropagation()}>
+                <button
+                    className="w-7 h-7 flex items-center justify-center rounded-lg bg-white/80 backdrop-blur-sm
+                        border border-slate-100 text-slate-400 hover:text-slate-700 hover:bg-white
+                        opacity-0 group-hover:opacity-100 transition-all"
+                    onClick={() => setMenuOpen(v => !v)}
+                >
+                    <MoreVertical size={14} />
+                </button>
+                {menuOpen && (
+                    <div className="absolute top-8 right-0 w-36 bg-white border border-slate-100 rounded-xl shadow-lg shadow-blue-100/40 overflow-hidden z-30">
+                        <button
+                            className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-semibold text-[#0D1B4B] hover:bg-blue-50 transition-colors"
+                            onClick={(e) => { e.stopPropagation(); setMenuOpen(false); if (onSelect) onSelect() }}
+                        >
+                            <Edit2 size={13} className="text-[#3B5BDB]" />Edit Resume
+                        </button>
+                        <button
+                            className="w-full flex items-center gap-2.5 px-3 py-2.5 text-xs font-semibold text-red-500 hover:bg-red-50 transition-colors"
+                            onClick={handleDeleteClick}
+                        >
+                            <Trash2 size={13} />Delete
+                        </button>
+                    </div>
+                )}
             </div>
-          </div>
-        )}
-      </div>
 
-      {/* Info area */}
-      <div className={cardStyles.infoArea}>
-        <div className="flex items-start justify-between mb-4">
-          <div className="flex-1">
-            <h5 className={cardStyles.title}>{title}</h5>
-            <div className={cardStyles.dateInfo}>
-              <Clock size={12} />
-              <span>Created At: {formattedCreatedDate}</span>
-              <span className="ml-2">Updated At: {formattedUpdatedDate}</span>
+            {/* ── Preview area ── */}
+            <div className={`relative h-[180px] bg-gradient-to-br ${accent.bg} flex items-center justify-center overflow-hidden`}>
+                {/* Mini resume mockup */}
+                <div className="w-[130px] bg-white rounded-xl shadow-lg border border-slate-100 p-3 transform group-hover:scale-[1.04] transition-transform duration-400">
+                    {/* Colored top bar */}
+                    <div className={`h-1.5 rounded-full bg-gradient-to-r ${accent.top} mb-2.5 w-full`} />
+                    {/* Avatar + name row */}
+                    <div className="flex items-center gap-2 mb-2">
+                        <div className={`w-5 h-5 rounded-full bg-gradient-to-br ${accent.top} flex-shrink-0`} />
+                        <div className="space-y-1 flex-1">
+                            <div className="h-1.5 bg-slate-700 rounded-full w-full" />
+                            <div className="h-1 bg-slate-300 rounded-full w-3/4" />
+                        </div>
+                    </div>
+                    {/* Lines */}
+                    <div className="space-y-1.5 mb-2">
+                        <div className="h-1 bg-slate-200 rounded-full w-full" />
+                        <div className="h-1 bg-slate-200 rounded-full w-5/6" />
+                        <div className="h-1 bg-slate-200 rounded-full w-4/5" />
+                    </div>
+                    {/* Section pills */}
+                    <div className="flex gap-1 flex-wrap">
+                        {['Profile', 'Work', 'Skills', 'Edu'].map((s, i) => (
+                            <div key={i} className={`px-1.5 py-0.5 text-[8px] rounded font-semibold ${
+                                i < Math.floor(completion / 25)
+                                    ? 'bg-blue-100 text-[#3B5BDB]'
+                                    : 'bg-slate-100 text-slate-400'
+                            }`}>{s}</div>
+                        ))}
+                    </div>
+                </div>
+
+                {/* Completion % badge */}
+                <div className="absolute top-3 right-3 flex items-center gap-1 px-2 py-1 bg-white/90 backdrop-blur-sm border border-slate-100 rounded-full shadow-sm">
+                    <div className={`w-2 h-2 rounded-full bg-gradient-to-br ${getBarColor()}`} />
+                    <span className="text-[10px] font-black text-[#0D1B4B]">{completion}%</span>
+                </div>
             </div>
-          </div>
-        </div>
 
-        {/* Progress bar */}
-        <div className="relative w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-          <div
-            className={`h-full bg-gradient-to-r ${getCompletionColor()} rounded-full transition-all duration-700 ease-out relative overflow-hidden`}
-            style={{ width: `${completion}%` }}
-          >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse"></div>
-          </div>
-          <div
-            className={`absolute top-0 h-full w-4 bg-gradient-to-r from-transparent to-white/50 blur-sm transition-all duration-700`}
-            style={{ left: `${Math.max(0, completion - 2)}%` }}
-          ></div>
-        </div>
+            {/* ── Info area ── */}
+            <div className="p-4 flex flex-col gap-3">
+                {/* Title + date */}
+                <div>
+                    <h5 className="font-black text-[#0D1B4B] text-sm truncate mb-1 group-hover:text-[#3B5BDB] transition-colors">
+                        {title}
+                    </h5>
+                    <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
+                        <Clock size={10} className="flex-shrink-0" />
+                        <span>Created {formattedCreatedDate}</span>
+                    </div>
+                </div>
 
-        {/* Completion status */}
-        <div className="flex justify-between items-center mt-2">
-          <span className="text-xs font-medium text-gray-500">
-            {completion < 50 ? "Getting Started" : completion < 80 ? "Almost There" : "Ready to Go!"}
-          </span>
-          <span className="text-xs font-bold text-gray-700">{completion}% Complete</span>
+                {/* Progress bar */}
+                <div>
+                    <div className="relative w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                        <div
+                            className={`h-full bg-gradient-to-r ${getBarColor()} rounded-full transition-all duration-700 ease-out relative overflow-hidden`}
+                            style={{ width: `${completion}%` }}
+                        >
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-pulse" />
+                        </div>
+                    </div>
+                    <div className="flex justify-between items-center mt-1.5">
+                        <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full border ${label.color}`}>
+                            {label.text}
+                        </span>
+                        <span className="text-[11px] font-black text-[#0D1B4B]">{completion}%</span>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
-  );
-};
+    )
+}
 
 export default ProfileInfoCard
 
 
-//TEMPLATE CARD 
-export const TemplateCard = ({thumbnailImg, isSelected, onSelect}) => {
-  return (
-    <div className={`group h-auto md:h-[300px] lg:h-[320px] flex flex-col bg-white border-2 overflow-hidden cursor-pointer 
-    transition-all duration-500 hover:scale-105 hover:shadow-lg rounded-3xl ${
-      isSelected ? 'border-violet-500 shadow-lg shadow-violet-500/20 bg-violet-50' : 'border-gray-200 hover:border-violet-300 '}`
-      } onClick={onSelect}>
-        {thumbnailImg ? (
-          <div className="relative w-full h-full overflow-hidden">
-            <img src={thumbnailImg || '/placeholder.svg'} alt="Template Review" className="w-full h-full object-cover 
-            group-hover:scale-110 transition-transform duration-700" />
-            
-            <div className="absolute inset-0 bg-gradient-to-t from-white/60 via-transparent to-transparent opacity-0 
-            group-hover:opacity-100 transition-opacity duration-300"/>
-
-            {isSelected && (
-              <div className="absolute inset-0 bg-violet-500/10 flex items-center justify-center">
-                <div className="w-16 h-16 bg-white backdrop-blur-sm rounded-full flex items-center justify-center shadow-lg
-                animate-pulse">
-                  <Check size={24} className="text-violet-600"/>
+// ── TEMPLATE CARD ─────────────────────────────────────────────
+export const TemplateCard = ({ thumbnailImg, isSelected, onSelect }) => {
+    return (
+        <div
+            className={`group h-auto md:h-[300px] lg:h-[320px] flex flex-col bg-white border-2 overflow-hidden cursor-pointer
+                transition-all duration-300 hover:scale-[1.02] hover:shadow-xl rounded-2xl ${
+                isSelected
+                    ? 'border-[#3B5BDB] shadow-lg shadow-blue-200/50 bg-blue-50/30'
+                    : 'border-slate-200 hover:border-blue-300 hover:shadow-blue-100/60'
+            }`}
+            onClick={onSelect}
+        >
+            {thumbnailImg ? (
+                <div className="relative w-full h-full overflow-hidden">
+                    <img
+                        src={thumbnailImg || '/placeholder.svg'}
+                        alt="Template Preview"
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-white/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                    {isSelected && (
+                        <div className="absolute inset-0 bg-[#3B5BDB]/10 flex items-center justify-center">
+                            <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-lg">
+                                <Check size={22} className="text-[#3B5BDB]" />
+                            </div>
+                        </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-blue-100/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 </div>
-              </div>
+            ) : (
+                <div className="w-full h-[200px] flex items-center flex-col justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+                    <div className="w-12 h-12 bg-gradient-to-br from-[#3B5BDB] to-[#5C7CFA] rounded-2xl flex items-center justify-center mb-3 shadow-md">
+                        <Edit2 size={20} className="text-white" />
+                    </div>
+                    <span className="text-[#0D1B4B] font-bold text-sm">No Preview</span>
+                </div>
             )}
-
-            {/* Hover Effect */}
-            <div className="absolute inset-0 bg-gradient-to-t from-violet-100/30 to-transparent opacity-0
-            group-hover:opacity-100 transition-opacity duration-300">
-
-            </div>
-          </div>
-        ) : (
-          <div className="w-full h-[200px] flex items-center flex-col justify-center bg-gradient-to-r from-violet-500
-          via-violet-600 to-fuchsia-50">
-            <div className="w-12 h-12 bg-gradient-to-br from-violet-500 to-fuchsia-500 rounded-2xl flex items-center justify-center mb-3">
-              <Edit size={20} className="text-white"/>
-            </div>
-            <span className="text-gray-700 font-bold">
-              No Preview
-            </span>
-          </div>
-        )}
-    </div>
-  )
+        </div>
+    )
 }
-
-

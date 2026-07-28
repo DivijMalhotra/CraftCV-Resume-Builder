@@ -8,9 +8,9 @@ const DashboardLayout = ({activeMenu, children}) => {
 
 
   return (
-    <div>
+    <div className="min-h-screen" style={{ background: 'linear-gradient(160deg, #edf2ff 0%, #f0f5ff 40%, #f8faff 70%, #ffffff 100%)' }}>
         <Navbar activeMenu={activeMenu}/>
-        {user && <div className='container mx-auto pt-4 pb-4'>{children}</div>}
+        {user && <div className='container mx-auto pt-6 pb-10'>{children}</div>}
     </div>
   )
 }

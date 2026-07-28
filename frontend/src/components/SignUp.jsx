@@ -6,6 +6,7 @@ import { validateEmail } from '../utils/helper';
 import axiosInstance from '../utils/axiosInstance';
 import { API_PATHS } from '../utils/apiPaths';
 import Input from './Inputs';
+import { LayoutTemplate } from 'lucide-react';
 
 
 
@@ -21,12 +22,12 @@ const SignUp = ({setCurrentPage}) => {
     const handleSignUp = async(e) => {
         e.preventDefault()
         if (!fullName){
-            setError('Please enter FullName')
+            setError('Please enter your Full Name')
             return;
         }
 
         if (!validateEmail) {
-            setError('Please enter a valide Email address')
+            setError('Please enter a valid Email address')
             return;
         }
         
@@ -57,6 +58,13 @@ const SignUp = ({setCurrentPage}) => {
 
   return (
     <div className={styles.signupContainer}>
+        {/* Logo Mark */}
+        <div className="flex justify-center mb-6">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#3B5BDB] to-[#5C7CFA] rounded-2xl flex items-center justify-center shadow-lg shadow-blue-200">
+                <LayoutTemplate className="text-white" size={22} />
+            </div>
+        </div>
+
         <div className={styles.headerWrapper}>
             <h3 className={styles.signupTitle}>Create Account</h3>
             <p className={styles.signupSubtitle}>Join thousands of professionals today</p>
@@ -70,8 +78,8 @@ const SignUp = ({setCurrentPage}) => {
             type='text'/>
 
             <Input value={email} onChange={({target}) => setEmail(target.value)}
-            label='Email'
-            placeholder='email@example.com'
+            label='Email Address'
+            placeholder='you@example.com'
             type='email'/>
 
             <Input value={password} onChange={({target}) => setPassword(target.value)}
@@ -87,7 +95,7 @@ const SignUp = ({setCurrentPage}) => {
 
             {/* FOOTER */}
             <p className={styles.switchText}>
-                Already have an account? {' '}
+                Already have an account?{' '}
                 <button onClick={() => setCurrentPage('login')} type='button' className={styles.signupSwitchButton}>
                     Sign In
                 </button>

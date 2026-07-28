@@ -38,9 +38,9 @@ const CreateResumeForm = () => {
   }
 
   return (
-    <div className='w-full max-w-md p-8 bg-white rounded-2xl border border-gray-100 shadow-lg'>
-      <h3 className='text-2xl font-bold text-gray-900 mb-2'>Create New Resume</h3>
-      <p className='text-gray-600 mb-8'>
+    <div className='w-full'>
+      <h3 className='text-2xl font-black text-[#0D1B4B] mb-2 tracking-tight'>Create New Resume</h3>
+      <p className='text-slate-400 mb-7 text-sm leading-relaxed'>
         Give your resume a title to get started. You can customize everything later.
       </p>
 
@@ -49,10 +49,10 @@ const CreateResumeForm = () => {
         label='Resume Title' placeholder='e.g., John Doe - Software Engineer'
         type='text'/>
 
-        {error && <p className='text-red-500 text-sm mb-4'>{error}</p>}
+        {error && <p className='text-red-500 text-sm mb-4 bg-red-50 border border-red-100 px-3 py-2 rounded-xl'>{error}</p>}
 
-        <button type='submit' className='w-full py-3 bg-gradient-to-r from-rose-500 to-pink-600 text-white font-black
-        rounded-2xl hover:scale-105 hover:shadow-xl hover:shadow-rose-200 transition-all'>
+        <button type='submit' className='w-full py-3.5 bg-[#3B5BDB] text-white font-bold
+        rounded-xl hover:bg-[#2F4AC0] hover:shadow-lg hover:shadow-blue-200/60 transition-all text-sm tracking-wide mt-2'>
           Create Resume
         </button>
       </form>

@@ -6,6 +6,7 @@ import { API_PATHS } from '../utils/apiPaths';
 import { authStyles as styles } from '../assets/dummyStyle';
 import Input from './Inputs';
 import { validateEmail } from '../utils/helper';
+import { LayoutTemplate } from 'lucide-react';
 
 
 
@@ -21,7 +22,7 @@ const Login = ({setCurrentPage}) => {
     const handleLogin = async(e) => {
         e.preventDefault()
         if (!validateEmail) {
-            setError('Please enter a valide Email address')
+            setError('Please enter a valid Email address')
             return;
         }
         if (!password) {
@@ -46,9 +47,16 @@ const Login = ({setCurrentPage}) => {
 
   return (
     <div className={styles.container}>
+        {/* Logo Mark */}
+        <div className="flex justify-center mb-6">
+            <div className="w-12 h-12 bg-gradient-to-br from-[#3B5BDB] to-[#5C7CFA] rounded-2xl flex items-center justify-center shadow-lg shadow-blue-200">
+                <LayoutTemplate className="text-white" size={22} />
+            </div>
+        </div>
+
         <div className={styles.headerWrapper}>
             <h3 className={styles.title}>Welcome Back</h3>
-            <p className={styles.signupSubtitle}>
+            <p className={styles.subtitle}>
                 Sign in to continue building amazing resumes
             </p>
         </div>
@@ -56,11 +64,9 @@ const Login = ({setCurrentPage}) => {
         {/* FORM */}
         <form onSubmit={handleLogin} className={styles.form}>
             <Input value={email} onChange={({target}) => setEmail(target.value)}
-            label='Email'
-            placeholder='divij@example.com'
+            label='Email Address'
+            placeholder='you@example.com'
             type='email'/>
-
-
 
             <Input value={password} onChange={({target}) => setPassword(target.value)}
             label='Password'
@@ -68,14 +74,15 @@ const Login = ({setCurrentPage}) => {
             type='password'/>
 
             {error && <div className={styles.errorMessage}>{error}</div>}
+
             <button type='submit' className={styles.submitButton}>
                 Sign In
             </button>
 
             <p className={styles.switchText}>
-                Don't have an account{' '}
+                Don't have an account?{' '}
                 <button type='button' className={styles.switchButton} onClick={() => setCurrentPage('signup')}>
-                    Sign Up
+                    Create one
                 </button>
             </p>
         </form>
